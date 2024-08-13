@@ -4,14 +4,13 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
+	"github.com/vladislavkori/gsbackend/internal/interfaces/rest/auth"
 )
 
 func Router() http.Handler {
 	r := chi.NewRouter()
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello, world! From SubRouter!"))
-	})
+	r.Mount("/auth", auth.Router())
 
 	return r
 }
