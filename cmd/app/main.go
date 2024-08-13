@@ -4,14 +4,13 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
+	"github.com/vladislavkori/gsbackend/internal/interfaces/rest"
 )
 
 func main() {
 	r := chi.NewRouter()
 
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello, world!"))
-	})
+	r.Mount("/api", rest.Router())
 
 	http.ListenAndServe(":8080", r)
 }
