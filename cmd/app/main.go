@@ -8,17 +8,12 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/sirupsen/logrus"
 	"github.com/vladislavkori/gsbackend/config"
-	"github.com/vladislavkori/gsbackend/internal/infrastructure/persistence/postgresql"
+	"github.com/vladislavkori/gsbackend/internal/infrastructure/persistence/postgres"
 	"github.com/vladislavkori/gsbackend/internal/interfaces/rest"
 )
 
 func main() {
 	r := chi.NewRouter()
-
-	if err := postgresql.ConnectToDB(); err != nil {
-		logrus.Errorln(err)
-		os.Exit(1)
-	}
 
 	env, err := config.NewEnv()
 	if err != nil {
@@ -26,7 +21,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	r.Mount("/api", rest.Router())
+	database, err := postgres.NewPostgresDB()
+	if err != nil {
+		logrus.Errorln(err)
+		os.Exit(1)
+	}
+
+	userRepository := postgres.NewPostgresUserRepository(database)
+
+	r.Mount("/api", rest.Router(userRepository))
 
 	http.ListenAndServe(fmt.Sprintf(":%s", env.SERVER_PORT), r)
 }
