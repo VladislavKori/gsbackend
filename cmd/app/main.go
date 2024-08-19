@@ -38,7 +38,7 @@ func main() {
 	}
 
 	userRepository := postgres.NewPostgresUserRepository(database)
-	userService := service.NewUserService(userRepository, []byte("jwt-secret"))
+	userService := service.NewUserService(userRepository, []byte(env.JWT_SECRET))
 	userHnaler := handler.NewUserHandler(userService)
 
 	r.Mount("/api", rest.Router(userHnaler))

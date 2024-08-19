@@ -6,3 +6,5 @@ POISTGRESQL_DB_NAME: greenshop
 POSTGRESQL_PORT: 5432
 POSTGRESQL_HOST: localhost 
 POSTGRESQL_SLLMODE: disable
+
+JWT_SECRET: it_realy_secret_key

@@ -12,6 +12,7 @@ type Env struct {
 	POSTGRESQL_PORT     string `mapstructure:"POSTGRESQL_PORT"`
 	POSTGRESQL_HOST     string `mapstructure:"POSTGRESQL_HOST"`
 	POSTGRESQL_SLLMODE  string `mapstructure:"POSTGRESQL_SLLMODE"`
+	JWT_SECRET          string `mapstructure:"JWT_SECRET"`
 }
 
 func NewEnv() (*Env, error) {
