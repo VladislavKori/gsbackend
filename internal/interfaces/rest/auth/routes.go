@@ -12,9 +12,7 @@ func Router(userHandler *handler.UserHandler) http.Handler {
 
 	r.Post("/register", userHandler.Register)
 
-	r.Post("/login", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("It's login route, but now it's not implemented"))
-	})
+	r.Post("/login", userHandler.Login)
 
 	return r
 }

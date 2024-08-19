@@ -69,3 +69,52 @@ func (s *UserHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (s *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
+	// Чтение body из Request
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "Unable to read body", http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
+
+	// Декодирование JSON в структуру
+	type RequestData struct {
+		Email    string `json:"email" validate:"required,email"`
+		Password string `json:"password" validate:"required,min=5"`
+	}
+
+	var data RequestData
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return
+	}
+
+	// Валидация полей
+	var validate = validator.New()
+
+	if err = validate.Struct(data); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// проверка пользователя
+	token, err := s.service.LoginUser(data.Email, data.Password)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Отправка ответа
+	response := map[string]string{
+		"access_token": token,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}

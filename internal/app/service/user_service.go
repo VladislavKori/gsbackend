@@ -72,3 +72,49 @@ func (s *UserService) RegisterUser(email, password string) (string, int64, error
 
 	return tokenString, *id, nil
 }
+
+func (s *UserService) LoginUser(email, password string) (string, error) {
+	user, err := s.repo.FindUserByEmail(email)
+	if err != nil {
+		return "", err
+	}
+
+	if user == nil {
+		return "", errors.New("user not found")
+	}
+
+	// Проверка пароля
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		return "", errors.New("invalid password")
+	}
+
+	// Устанавливаем время истечения токена
+	expirationTime := time.Now().Add(15 * time.Minute)
+
+	// Создаем клеймы
+	type Claims struct {
+		email      string    `json:"email"`
+		created_at time.Time `json:"created_at"`
+		jwt.RegisteredClaims
+	}
+
+	claims := &Claims{
+		email:      user.Email,
+		created_at: time.Now(),
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
+			Issuer:    "your_app_name",
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	// Подписываем токен с использованием секретного ключа
+	tokenString, err := token.SignedString(s.jwtSecret)
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
+}
