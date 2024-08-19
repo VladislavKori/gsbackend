@@ -5,7 +5,13 @@ import (
 )
 
 type Env struct {
-	SERVER_PORT string `mapstructure:"SERVER_PORT"`
+	SERVER_PORT         string `mapstructure:"SERVER_PORT"`
+	POSTGRESQL_USERNAME string `mapstructure:"POSTGRESQL_USERNAME"`
+	POSTGRESQL_PASSWORD string `mapstructure:"POSTGRESQL_PASSWORD"`
+	POISTGRESQL_DB_NAME string `mapstructure:"POISTGRESQL_DB_NAME"`
+	POSTGRESQL_PORT     string `mapstructure:"POSTGRESQL_PORT"`
+	POSTGRESQL_HOST     string `mapstructure:"POSTGRESQL_HOST"`
+	POSTGRESQL_SLLMODE  string `mapstructure:"POSTGRESQL_SLLMODE"`
 }
 
 func NewEnv() (*Env, error) {

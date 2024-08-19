@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/sirupsen/logrus"
 	"github.com/vladislavkori/gsbackend/config"
+	"github.com/vladislavkori/gsbackend/internal/domain/repository"
 	"github.com/vladislavkori/gsbackend/internal/infrastructure/persistence/postgres"
 	"github.com/vladislavkori/gsbackend/internal/interfaces/rest"
 )
@@ -21,7 +22,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	database, err := postgres.NewPostgresDB()
+	database, err := postgres.NewPostgresDB(repository.PostgresConfig{
+		Host:     env.POSTGRESQL_HOST,
+		Port:     env.POSTGRESQL_PORT,
+		User:     env.POSTGRESQL_USERNAME,
+		Password: env.POSTGRESQL_PASSWORD,
+		DB_Name:  env.POISTGRESQL_DB_NAME,
+		SSLMode:  env.POSTGRESQL_SLLMODE,
+	})
 	if err != nil {
 		logrus.Errorln(err)
 		os.Exit(1)
