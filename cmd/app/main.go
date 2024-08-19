@@ -8,9 +8,11 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/sirupsen/logrus"
 	"github.com/vladislavkori/gsbackend/config"
+	"github.com/vladislavkori/gsbackend/internal/app/service"
 	"github.com/vladislavkori/gsbackend/internal/domain/repository"
 	"github.com/vladislavkori/gsbackend/internal/infrastructure/persistence/postgres"
 	"github.com/vladislavkori/gsbackend/internal/interfaces/rest"
+	"github.com/vladislavkori/gsbackend/internal/interfaces/rest/handler"
 )
 
 func main() {
@@ -36,8 +38,10 @@ func main() {
 	}
 
 	userRepository := postgres.NewPostgresUserRepository(database)
+	userService := service.NewUserService(userRepository, []byte("jwt-secret"))
+	userHnaler := handler.NewUserHandler(userService)
 
-	r.Mount("/api", rest.Router(userRepository))
+	r.Mount("/api", rest.Router(userHnaler))
 
 	http.ListenAndServe(fmt.Sprintf(":%s", env.SERVER_PORT), r)
 }

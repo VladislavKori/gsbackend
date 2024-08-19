@@ -4,14 +4,14 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
-	"github.com/vladislavkori/gsbackend/internal/domain/repository"
 	"github.com/vladislavkori/gsbackend/internal/interfaces/rest/auth"
+	"github.com/vladislavkori/gsbackend/internal/interfaces/rest/handler"
 )
 
-func Router(userRep repository.UserRepository) http.Handler {
+func Router(userHandler *handler.UserHandler) http.Handler {
 	r := chi.NewRouter()
 
-	r.Mount("/auth", auth.Router(userRep))
+	r.Mount("/auth", auth.Router(userHandler))
 
 	return r
 }
